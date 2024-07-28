@@ -1,10 +1,20 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-import schemas
-import services
-from database import get_db
+import os
+from fastapi import Depends, FastAPI, HTTPException, Security
+from fastapi.security import APIKeyHeader
 from config.config import settings
-from typing import List
+from api import router as api_router
+from starlette.status import HTTP_403_FORBIDDEN
+
+SECRET_KEY = os.getenv("SUPERSECRETKEY", "Cowabunga")
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+async def get_api_key(api_key_header: str = Security(api_key_header)):
+    if api_key_header == SECRET_KEY:
+        return api_key_header
+    else:
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN, detail="Invalid API Key"
+        )
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -13,24 +23,9 @@ app = FastAPI(
     debug=settings.DEBUG,
     openapi_url="/api/v1/openapi.json",
     docs_url="/api/docs",
-    redoc_url="/api/redoc"
+    redoc_url="/api/redoc",
+    dependencies=[Depends(get_api_key)]
 )
 
-@app.post("/send_message/", response_model=schemas.Conversation)
-async def send_message(message_input: schemas.MessageInput, db: AsyncSession = Depends(get_db)):
-    """
-    Send a message and get a response from the AI.
-
-    - **user_id**: ID of the user sending the message
-    - **content**: Content of the message
-    """
-    return await services.process_user_message(db, message_input)
-
-@app.get("/conversations/{user_id}", response_model=List[schemas.Conversation])
-async def get_user_conversations(user_id: int, db: AsyncSession = Depends(get_db)):
-    """
-    Retrieve all conversations for a specific user.
-
-    - **user_id**: ID of the user whose conversations to retrieve
-    """
-    return await services.get_user_conversations(db, user_id)
+# Include the router
+app.include_router(api_router, prefix="/api")

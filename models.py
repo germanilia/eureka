@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
+from sqlalchemy.sql import func
 
 class User(Base):
     __tablename__ = "users"
@@ -12,7 +13,7 @@ class User(Base):
     age = Column(Integer, nullable=True)
     email = Column(String(100), nullable=True)
     last_active = Column(DateTime, default=datetime.utcnow)
-
+    
     conversations = relationship("Conversation", back_populates="user")
 
 class Conversation(Base):
@@ -21,5 +22,6 @@ class Conversation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     messages = Column(JSON)
+    last_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     user = relationship("User", back_populates="conversations")
