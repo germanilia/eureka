@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 ENV = os.getenv("ENV", "dev")
 
 # Load the appropriate .env file
-load_dotenv(f".env.common")
 load_dotenv(f".env.{ENV.lower()}")
 
 class Settings(BaseSettings):
