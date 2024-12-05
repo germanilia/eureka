@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from llm.llm_manager import LLMManager, LLMModels
 # from models import Conversation
-from schemas import Conversation, MessageInput
+from schemas import Conversation as ConversationSchema, MessageInput
 from database import get_db
 from typing import List
 from services import ConversationManager
@@ -10,10 +10,10 @@ from services import ConversationManager
 router = APIRouter()
 
 
-@router.post("/conversations/", response_model=Conversation)
+@router.post("/conversations/", response_model=ConversationSchema)
 async def send_message(
     message_input: MessageInput, db: AsyncSession = Depends(get_db)
-) -> Conversation:
+) -> ConversationSchema:
     """
     Send a message and get a response from the AI.
 
@@ -29,8 +29,8 @@ async def send_message(
     return response
 
 
-@router.get("/conversations/{user_id}", response_model=List[Conversation])
-async def get_user_conversations(user_id: int, db: AsyncSession = Depends(get_db)) -> List[Conversation]:
+@router.get("/conversations/{user_id}", response_model=List[ConversationSchema])
+async def get_user_conversations(user_id: int, db: AsyncSession = Depends(get_db)) -> List[ConversationSchema]:
     """
     Retrieve all conversations for a specific user.
 
@@ -38,4 +38,4 @@ async def get_user_conversations(user_id: int, db: AsyncSession = Depends(get_db
     """
     conversation_manager = ConversationManager(db)
     conversations = await conversation_manager.get_user_conversations(user_id)
-    return conversations
+    return [ConversationSchema.model_validate(conv) for conv in conversations]

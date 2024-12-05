@@ -1,7 +1,7 @@
 from langchain_aws import ChatBedrock
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import Conversation
-from schemas import Conversation, MessageInput, MessageObject, MessageSpeaker
+from schemas import MessageInput, MessageObject, MessageSpeaker
 from dao.user_dao import UserDAO
 from dao.conversation_dao import ConversationDAO
 from llm.conversation import LLMConversation
