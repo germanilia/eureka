@@ -20,7 +20,7 @@ class LLMManager:
     @staticmethod
     def get_llm(
         model_name: LLMModels = LLMModels[settings.MODEL_NAME],
-        region: str = "us-east-1",
+        region: str = "us-west-2",
         temperature: float = 0.4,
         credentials_profile: Optional[str] = None,
     ) -> ChatBedrock:
