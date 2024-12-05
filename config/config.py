@@ -2,8 +2,6 @@ import os
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
-from llm.llm_manager import LLMModels
-
 # Determine the environment
 ENV = os.getenv("ENV", "dev")
 
@@ -15,7 +13,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     APP_NAME: str = "Eureka - Conversation Agent"
     APP_VERSION: str = "0.1.0"
-    MODEL_NAME: str = LLMModels[os.getenv("MODEL_NAME", "anthropic.claude-3-5-haiku-20241022-v1:0")]
+    MODEL_NAME: str = os.getenv("MODEL_NAME", "anthropic.claude-3-5-haiku-20241022-v1:0")
     DB_HOST: str = os.getenv("DB_HOST", "localhost")
     DB_PORT: int = int(os.getenv("DB_PORT", 3306))
     DB_USER: str = os.getenv("DB_USER", "")
