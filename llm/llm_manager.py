@@ -4,7 +4,7 @@ import boto3
 import logging
 from langchain_aws import ChatBedrock
 from botocore.config import Config
-
+from config.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +19,9 @@ class LLMModels(StrEnum):
 class LLMManager:
     @staticmethod
     def get_llm(
-        model_name: LLMModels,
+        model_name: LLMModels = LLMModels[settings.MODEL_NAME],
         region: str = "us-east-1",
-        temperature=0.4,
+        temperature: float = 0.4,
         credentials_profile: Optional[str] = None,
     ) -> ChatBedrock:
         try:
@@ -34,7 +34,7 @@ class LLMManager:
                 llm = ChatBedrock(
                     client=client,
                     credentials_profile_name=credentials_profile,
-                    model_id=model_name,
+                    model=model_name,
                     model_kwargs={
                         "max_tokens": 4096,
                         "stop_sequences": ["\n\nHuman:"],

@@ -21,7 +21,7 @@ async def send_message(
     - **content**: Content of the message
     """
     conversation_manager = ConversationManager(db)
-    llm = LLMManager.get_llm(LLMModels.claude_haiku)
+    llm = LLMManager.get_llm()
     response = await conversation_manager.process_user_message(
         message_input=message_input, llm=llm
     )

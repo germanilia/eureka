@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     APP_NAME: str = "Eureka - Conversation Agent"
     APP_VERSION: str = "0.1.0"
-    MODEL_NAME: str = os.getenv("MODEL_NAME", "anthropic.claude-3-5-sonnet-20241022-v2:0")
+    MODEL_NAME: str = os.getenv("MODEL_NAME", "claude_sonnet_35")
     DB_HOST: str = os.getenv("DB_HOST", "localhost")
     DB_PORT: int = int(os.getenv("DB_PORT", 3306))
     DB_USER: str = os.getenv("DB_USER", "")
